@@ -1,6 +1,7 @@
 use std::process::exit;
 use ParserError::IncompleteLoop;
 use crate::instruction::Instruction;
+use crate::instruction::Instruction::AddTo;
 use crate::parser::ParserError::UnexpectedToken;
 
 /// Enum representing possible errors that can occur during parsing.
@@ -36,42 +37,74 @@ impl ParserError {
 ///
 /// * A Result containing either a vector of Instructions or a ParserError.
 pub fn parse(source: &str) -> Result<Vec<Instruction>, ParserError> {
-    let mut result = vec![];
-    let mut loops = vec![];
+    let mut contexts = vec![vec![]];
 
     for char in source.chars() {
         let instruction = match char {
-            '>' => Instruction::Increase,
-            '<' => Instruction::Decrease,
-            '+' => Instruction::Increment,
-            '-' => Instruction::Decrement,
+            '>' => {
+                if let Some(Instruction::Move(n)) = contexts.last_mut().unwrap().last_mut() {
+                    *n += 1;
+                    continue;
+                }
+                Instruction::Move(1)
+            }
+            '<' => {
+                if let Some(Instruction::Move(n)) = contexts.last_mut().unwrap().last_mut() {
+                    *n -= 1;
+                    continue;
+                }
+                Instruction::Move(-1)
+            }
+            '+' => {
+                if let Some(Instruction::Add(n)) = contexts.last_mut().unwrap().last_mut() {
+                    *n += 1;
+                    continue;
+                }
+                Instruction::Add(1)
+            }
+            '-' => {
+                if let Some(Instruction::Add(n)) = contexts.last_mut().unwrap().last_mut() {
+                    *n -= 1;
+                    continue;
+                }
+                Instruction::Add(1u8.wrapping_neg())
+            }
             '.' => Instruction::Write,
             ',' => Instruction::Read,
             '[' => {
-                loops.push(vec![]);
+                contexts.push(vec![]);
                 continue;
             }
             ']' => {
-                let Some(instructions) = loops.pop() else {
+                let Some(instructions) = contexts.pop() else {
                     return Err(UnexpectedToken);
                 };
-                let Some(current_loop) = loops.last_mut() else {
-                    result.push(Instruction::Loop(instructions));
-                    continue;
+                let Some(current_context) = contexts.last_mut() else {
+                    return Err(UnexpectedToken);
                 };
-                current_loop.push(Instruction::Loop(instructions));
+                match instructions[..] {
+                    [Instruction::Add(n)] if n & 1 == 1 => {
+                        current_context.push(Instruction::Clear);
+                        continue;
+                    }
+                    [Instruction::Add(255), Instruction::Move(x), Instruction::Add(1), Instruction::Move(y)]
+                    if x == -y => {
+                        current_context.push(AddTo { offset: x })
+                    }
+                    _ => {}
+                }
+                current_context.push(Instruction::Loop(instructions));
                 continue;
             }
             _ => continue
         };
-        let Some(current_loop) = loops.last_mut() else {
-            result.push(instruction);
-            continue;
+        let Some(current_context) = contexts.last_mut() else {
+            return Err(IncompleteLoop);
         };
-        current_loop.push(instruction);
+        current_context.push(instruction);
     }
-    if !loops.is_empty() {
+    if contexts.len() != 1 {
         return Err(IncompleteLoop);
     }
-    Ok(result)
+    Ok(contexts.pop().unwrap())
 }

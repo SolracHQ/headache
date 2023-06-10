@@ -7,11 +7,12 @@ use crate::instruction::Instruction;
 const MEMORY_SIZE: usize = 1024 * 4;
 
 /// Struct representing the state of a Brainfuck program.
+#[derive(Debug)]
 pub struct State {
     /// Array representing the memory used by the Brainfuck program.
     memory: [Wrapping<u8>; MEMORY_SIZE],
     /// Index representing the current position of the data pointer in the memory array.
-    index: usize
+    index: usize,
 }
 
 impl State {
@@ -19,7 +20,7 @@ impl State {
     pub fn new() -> Self {
         Self {
             memory: [Wrapping(0u8); MEMORY_SIZE],
-            index: 0
+            index: 0,
         }
     }
 }
@@ -30,7 +31,7 @@ impl State {
 ///
 /// * `instructions` - A vector of Instructions to be executed.
 pub fn execute(instructions: Vec<Instruction>) {
-    execute_with_state(&instructions, &mut State::new())
+    execute_with_state(&instructions, &mut State::new());
 }
 
 /// Function to execute a slice of Brainfuck instructions with a given State.
@@ -42,10 +43,11 @@ pub fn execute(instructions: Vec<Instruction>) {
 pub fn execute_with_state(instructions: &[Instruction], state: &mut State) {
     for instruction in instructions {
         match instruction {
-            Instruction::Increase => state.index = (state.index + 1) % MEMORY_SIZE,
-            Instruction::Decrease => state.index = (state.index + MEMORY_SIZE - 1) % MEMORY_SIZE,
-            Instruction::Increment => state.memory[state.index] += 1,
-            Instruction::Decrement => state.memory[state.index] -= 1,
+            Instruction::Move(delta) => {
+                let delta = (MEMORY_SIZE as isize + delta % MEMORY_SIZE as isize) as usize;
+                state.index = (state.index + delta) % MEMORY_SIZE;
+            }
+            Instruction::Add(n) => { state.memory[state.index] += *n }
             Instruction::Write => {
                 print!("{}", state.memory[state.index].0 as char);
                 stdout().flush().unwrap();
@@ -57,6 +59,14 @@ pub fn execute_with_state(instructions: &[Instruction], state: &mut State) {
                 while state.memory[state.index].0 != 0 {
                     execute_with_state(&instructions, state)
                 }
+            }
+            Instruction::Clear => state.memory[state.index] = Wrapping(0),
+            Instruction::AddTo { offset } => {
+                let delta = (MEMORY_SIZE as isize + offset % MEMORY_SIZE as isize) as usize;
+                let to = (state.index + delta) % MEMORY_SIZE;
+
+                state.memory[to] += state.memory[state.index];
+                state.memory[state.index] = Wrapping(0);
             }
         }
     }
