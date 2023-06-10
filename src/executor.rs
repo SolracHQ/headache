@@ -42,8 +42,8 @@ pub fn execute(instructions: Vec<Instruction>) {
 pub fn execute_with_state(instructions: &[Instruction], state: &mut State) {
     for instruction in instructions {
         match instruction {
-            Instruction::Increase => state.index += 1,
-            Instruction::Decrease => state.index -= 1,
+            Instruction::Increase => state.index = (state.index + 1) % MEMORY_SIZE,
+            Instruction::Decrease => state.index = (state.index - 1) % MEMORY_SIZE,
             Instruction::Increment => state.memory[state.index] += 1,
             Instruction::Decrement => state.memory[state.index] -= 1,
             Instruction::Write => {
