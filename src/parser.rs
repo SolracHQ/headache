@@ -5,6 +5,7 @@ use crate::instruction::Instruction::AddTo;
 use crate::parser::ParserError::UnexpectedToken;
 
 /// Enum representing possible errors that can occur during parsing.
+#[derive(Debug)]
 pub enum ParserError {
     /// Error indicating that a loop was not closed properly.
     IncompleteLoop,

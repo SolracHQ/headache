@@ -4,14 +4,17 @@ use crate::cli::CLIError::{CLI, IO};
 use crate::cli::Mode::{Executor, Interpreted};
 
 #[derive(Parser)]
-#[clap(name="Headache")]
+#[clap(name = "Headache")]
 #[clap(version = "0.1.0", author = "CarlosEduardoL")]
 struct Headache {
     /// Brainfuck script file
     file: Option<String>,
     /// Run Headache on real-time interpreter mode
-    #[clap(short='i', long)]
+    #[clap(short = 'i', long)]
     interpreter: bool,
+    /// Execute literal script
+    #[clap(short = 'e', long)]
+    execute: Option<String>,
 }
 
 /// Enum representing the mode in which the Headache program is running.
@@ -20,7 +23,7 @@ pub enum Mode {
     /// Mode indicating that the program is executing a Brainfuck script from a file.
     Executor(String),
     /// Mode indicating that the program is running in real-time interpreter mode.
-    Interpreted
+    Interpreted,
 }
 
 /// Enum representing possible errors that can occur when parsing command line arguments.
@@ -29,7 +32,7 @@ pub enum CLIError {
     /// Error indicating that an IO error occurred.
     IO(io::Error),
     /// Error indicating that a command line argument error occurred.
-    CLI(String)
+    CLI(String),
 }
 
 /// Function to determine the mode in which the Headache program should run based on command line arguments.
@@ -42,9 +45,11 @@ pub fn get_mode() -> Result<Mode, CLIError> {
 
     if let Some(file) = opts.file {
         Ok(Executor(fs::read_to_string(file).map_err(|e| IO(e))?))
+    } else if let Some(source) = opts.execute {
+        Ok(Executor(source))
     } else if opts.interpreter {
         Ok(Interpreted)
     } else {
-        Err(CLI("Error: No file provided and not running in interpreted mode".to_string()))
+        Err(CLI("Error: No file provided and not running in interpreted mode or eval mode".to_string()))
     }
 }

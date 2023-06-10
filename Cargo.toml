@@ -7,4 +7,3 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.3.3", features = ["derive"] }
-crossterm = "0.26.1"
