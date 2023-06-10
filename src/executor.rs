@@ -4,7 +4,8 @@ use crate::input::getchar;
 use crate::instruction::Instruction;
 
 /// Constant representing the size of the memory array used by the Brainfuck program.
-const MEMORY_SIZE: usize = 1024 * 4;
+/// http://brainfuck.org/brainfuck.html
+const MEMORY_SIZE: usize = 30_000;
 
 /// Struct representing the state of a Brainfuck program.
 #[derive(Debug)]
