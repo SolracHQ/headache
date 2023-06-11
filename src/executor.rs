@@ -6,7 +6,7 @@ use crate::instruction::Instruction;
 use crate::parser::parse;
 
 /// Constant representing the size of the memory array used by the Brainfuck program.
-/// http://brainfuck.org/brainfuck.html
+/// [DOC](http://brainfuck.org/brainfuck.html)
 const MEMORY_SIZE: usize = 30_000;
 
 /// Struct representing the state of a Brainfuck program.
@@ -78,6 +78,15 @@ impl <Input: Read, Output: Write> Executor<Input, Output> {
     ///
     /// assert_eq!(&output, b"Hello, World!");
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// This function returns an error if any of the following conditions are met:
+    ///
+    /// * The given Brainfuck code cannot be parsed successfully. In this case, a `ParseError`
+    ///   is returned containing the specific parsing error that occurred.
+    /// * An I/O error occurs while reading from the input stream or writing to the output stream.
+    ///   In this case, a `RuntimeError` is returned containing the underlying I/O error.
     pub fn execute(&mut self, code: &str) -> Result<(), Error> {
         let instructions = match parse(code) {
             Ok(instructions) => instructions,
@@ -105,6 +114,15 @@ impl <Input: Read, Output: Write> Executor<Input, Output> {
     /// # Arguments
     ///
     /// * `instructions` - A vector of Instructions to be executed.
+    ///
+    /// # Errors
+    ///
+    /// This function returns an error if any of the following conditions are met:
+    ///
+    /// * The given Brainfuck code cannot be parsed successfully. In this case, a `ParseError`
+    ///   is returned containing the specific parsing error that occurred.
+    /// * An I/O error occurs while reading from the input stream or writing to the output stream.
+    ///   In this case, a `RuntimeError` is returned containing the underlying I/O error.
     fn _execute(&mut self, instructions: &[Instruction]) -> Result<(), Error> {
         for instruction in instructions {
             match instruction {

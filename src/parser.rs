@@ -11,7 +11,7 @@ use crate::instruction::Instruction::AddTo;
 ///
 /// # Returns
 ///
-/// * A Result containing either a vector of Instructions or a ParserError.
+/// * A Result containing either a vector of Instructions or a `ParserError`.
 pub fn parse(source: &str) -> Result<Vec<Instruction>, ParserError> {
     let mut contexts = vec![vec![]];
 
@@ -65,7 +65,7 @@ pub fn parse(source: &str) -> Result<Vec<Instruction>, ParserError> {
                     }
                     [Instruction::Add(255), Instruction::Move(x), Instruction::Add(1), Instruction::Move(y)]
                     if x == -y => {
-                        current_context.push(AddTo { offset: x })
+                        current_context.push(AddTo { offset: x });
                     }
                     _ => {}
                 }
