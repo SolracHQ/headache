@@ -6,8 +6,13 @@ edition = "2021"
 documentation = "https://carloseduardol.github.io/headache/headache/"
 repository = "https://github.com/CarlosEduardoL/headache"
 
+[dependencies]
+clap = { version = "4.3.3", features = ["derive"], optional = true }
+
+[features]
+build-binary = ["clap"]
+
 [[bin]]
 name = "headache"
-
-[dependencies]
-clap = { version = "4.3.3", features = ["derive"] }
+path = "src/cli/main.rs"
+required-features = ["build-binary"]
