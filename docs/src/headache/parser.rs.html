@@ -97,7 +97,7 @@
 ///
 /// # Returns
 ///
-/// * A Result containing either a vector of Instructions or a ParserError.
+/// * A Result containing either a vector of Instructions or a `ParserError`.
 </span><span class="kw">pub fn </span>parse(source: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Instruction&gt;, ParserError&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>contexts = <span class="macro">vec!</span>[<span class="macro">vec!</span>[]];
 
@@ -151,7 +151,7 @@
                     }
                     [Instruction::Add(<span class="number">255</span>), Instruction::Move(x), Instruction::Add(<span class="number">1</span>), Instruction::Move(y)]
                     <span class="kw">if </span>x == -y =&gt; {
-                        current_context.push(AddTo { offset: x })
+                        current_context.push(AddTo { offset: x });
                     }
                     <span class="kw">_ </span>=&gt; {}
                 }

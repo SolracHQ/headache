@@ -155,6 +155,24 @@
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
 <a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::{Read, stdin, Stdin, stdout, Stdout, Write};
 <span class="kw">use </span>std::num::Wrapping;
 <span class="kw">use </span><span class="kw">crate</span>::error::Error;
@@ -163,7 +181,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::parser::parse;
 
 <span class="doccomment">/// Constant representing the size of the memory array used by the Brainfuck program.
-/// http://brainfuck.org/brainfuck.html
+/// [DOC](http://brainfuck.org/brainfuck.html)
 </span><span class="kw">const </span>MEMORY_SIZE: usize = <span class="number">30_000</span>;
 
 <span class="doccomment">/// Struct representing the state of a Brainfuck program.
@@ -235,6 +253,15 @@
     ///
     /// assert_eq!(&amp;output, b&quot;Hello, World!&quot;);
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// This function returns an error if any of the following conditions are met:
+    ///
+    /// * The given Brainfuck code cannot be parsed successfully. In this case, a `ParseError`
+    ///   is returned containing the specific parsing error that occurred.
+    /// * An I/O error occurs while reading from the input stream or writing to the output stream.
+    ///   In this case, a `RuntimeError` is returned containing the underlying I/O error.
     </span><span class="kw">pub fn </span>execute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, code: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">let </span>instructions = <span class="kw">match </span>parse(code) {
             <span class="prelude-val">Ok</span>(instructions) =&gt; instructions,
@@ -262,6 +289,15 @@
     /// # Arguments
     ///
     /// * `instructions` - A vector of Instructions to be executed.
+    ///
+    /// # Errors
+    ///
+    /// This function returns an error if any of the following conditions are met:
+    ///
+    /// * The given Brainfuck code cannot be parsed successfully. In this case, a `ParseError`
+    ///   is returned containing the specific parsing error that occurred.
+    /// * An I/O error occurs while reading from the input stream or writing to the output stream.
+    ///   In this case, a `RuntimeError` is returned containing the underlying I/O error.
     </span><span class="kw">fn </span>_execute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, instructions: <span class="kw-2">&amp;</span>[Instruction]) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">for </span>instruction <span class="kw">in </span>instructions {
             <span class="kw">match </span>instruction {
