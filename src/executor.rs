@@ -20,12 +20,12 @@ pub struct Executor<Input: Read, Output: Write> {
     /// This is an array of `Wrapping<u8>` values, where each value represents a single
     /// memory cell in the Brainfuck program. The size of the array is determined by the
     /// `MEMORY_SIZE` constant.
-    memory: [Wrapping<u8>; MEMORY_SIZE],
+    pub memory: [Wrapping<u8>; MEMORY_SIZE],
     /// Index representing the current position of the data pointer in the memory array.
     ///
     /// This value is used to keep track of which memory cell is currently being accessed
     /// by the Brainfuck program. It is updated whenever a move instruction is executed.
-    index: usize,
+    pub index: usize,
     /// Input stream used for reading data into the Brainfuck program.
     ///
     /// This can be any type that implements the `Read` trait. If no input stream is provided

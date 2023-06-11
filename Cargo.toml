@@ -3,6 +3,8 @@ name = "headache"
 version = "0.2.0"
 license = "MIT"
 edition = "2021"
+documentation = "https://carloseduardol.github.io/headache/headache/"
+repository = "https://github.com/CarlosEduardoL/headache"
 
 [[bin]]
 name = "headache"

@@ -177,12 +177,12 @@
     /// This is an array of `Wrapping&lt;u8&gt;` values, where each value represents a single
     /// memory cell in the Brainfuck program. The size of the array is determined by the
     /// `MEMORY_SIZE` constant.
-    </span>memory: [Wrapping&lt;u8&gt;; MEMORY_SIZE],
+    </span><span class="kw">pub </span>memory: [Wrapping&lt;u8&gt;; MEMORY_SIZE],
     <span class="doccomment">/// Index representing the current position of the data pointer in the memory array.
     ///
     /// This value is used to keep track of which memory cell is currently being accessed
     /// by the Brainfuck program. It is updated whenever a move instruction is executed.
-    </span>index: usize,
+    </span><span class="kw">pub </span>index: usize,
     <span class="doccomment">/// Input stream used for reading data into the Brainfuck program.
     ///
     /// This can be any type that implements the `Read` trait. If no input stream is provided
