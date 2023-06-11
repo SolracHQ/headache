@@ -1,32 +1,7 @@
-use std::process::exit;
-use ParserError::IncompleteLoop;
+use crate::error::ParserError;
+use crate::error::ParserError::{IncompleteLoop, UnexpectedToken};
 use crate::instruction::Instruction;
 use crate::instruction::Instruction::AddTo;
-use crate::parser::ParserError::UnexpectedToken;
-
-/// Enum representing possible errors that can occur during parsing.
-#[derive(Debug)]
-pub enum ParserError {
-    /// Error indicating that a loop was not closed properly.
-    IncompleteLoop,
-    /// Error indicating that an unexpected token was encountered.
-    UnexpectedToken,
-}
-
-impl ParserError {
-    /// Function to handle parser errors and exit the program.
-    pub fn fail(self) -> ! {
-        match self {
-            IncompleteLoop => {
-                eprintln!("All the '[' instructions must be closed with a ']' instruction");
-            }
-            UnexpectedToken => {
-                eprintln!("Cannot close ']' without first open '[' it");
-            }
-        }
-        exit(1)
-    }
-}
 
 /// Function to parse a Brainfuck source code string into a vector of Instructions.
 ///

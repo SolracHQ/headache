@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"headache":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.69.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"headache/executor/struct.Executor.html\" title=\"struct headache::executor::Executor\">Executor</a>&lt;<a class=\"struct\" href=\"https://doc.rust-lang.org/1.69.0/std/io/stdio/struct.Stdin.html\" title=\"struct std::io::stdio::Stdin\">Stdin</a>, <a class=\"struct\" href=\"https://doc.rust-lang.org/1.69.0/std/io/stdio/struct.Stdout.html\" title=\"struct std::io::stdio::Stdout\">Stdout</a>&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

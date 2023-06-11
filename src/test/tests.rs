@@ -1,34 +1,12 @@
-use std::io::Write;
-use std::rc::Rc;
-use std::sync::Mutex;
+use std::io::{Cursor, stdin};
 use crate::executor::Executor;
-use crate::parser::parse;
 use crate::test::scripts::{ADD, COMMENTED_HELLO_WORLD, HELLO_WORLD, MANDELBROT, SHORTER_HELLO_WORLD};
 
-#[repr(transparent)]
-#[derive(Clone)]
-struct MockWriter(Rc<Mutex<Vec<u8>>>);
-
-impl MockWriter {
-    fn new() -> Self {
-        MockWriter(Rc::new(Mutex::new(vec![])))
-    }
-}
-
-impl Write for MockWriter {
-    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        self.0.lock().unwrap().extend_from_slice(buf);
-        Ok(buf.len())
-    }
-    fn flush(&mut self) -> std::io::Result<()> {Ok(())}
-}
-
 fn execute_with_output(program: &str) -> String {
-    let result = MockWriter::new();
-    let mut executor = Executor::new(None, Some(Box::new(result.clone())));
-    executor.execute(&parse(program).unwrap()).unwrap();
-    let vec = result.0.lock().unwrap();
-    std::str::from_utf8(&vec).unwrap().to_string()
+    let mut result = Vec::new();
+    let mut executor = Executor::new(stdin(), Cursor::new(&mut result));
+    executor.execute(program).unwrap();
+    std::str::from_utf8(&result).unwrap().to_string()
 }
 
 #[test]
@@ -62,7 +40,7 @@ fn test_mandelbrot() {
 }
 
 const MANDELBROT_RESULT: &str =
-"AAAAAAAAAAAAAAAABBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDEGFFEEEEDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+    "AAAAAAAAAAAAAAAABBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDEGFFEEEEDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 AAAAAAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDEEEFGIIGFFEEEDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
 AAAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEFFFI KHGGGHGEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBB
 AAAAAAAAAAAABBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEFFGHIMTKLZOGFEEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBB

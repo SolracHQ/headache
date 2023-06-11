@@ -1,6 +1,6 @@
 use std::{fs, io};
 use clap::Parser;
-use crate::cli::CLIError::{CLI, IO};
+use crate::cli::CLIError::{Cli, IO};
 use crate::cli::Mode::{Executor, Interpreted};
 
 #[derive(Parser)]
@@ -32,7 +32,7 @@ pub enum CLIError {
     /// Error indicating that an IO error occurred.
     IO(io::Error),
     /// Error indicating that a command line argument error occurred.
-    CLI(String),
+    Cli(String),
 }
 
 /// Function to determine the mode in which the Headache program should run based on command line arguments.
@@ -50,6 +50,6 @@ pub fn get_mode() -> Result<Mode, CLIError> {
     } else if opts.interpreter {
         Ok(Interpreted)
     } else {
-        Err(CLI("Error: No file provided and not running in interpreted mode or eval mode".to_string()))
+        Err(Cli("Error: No file provided and not running in interpreted mode or eval mode".to_string()))
     }
 }
