@@ -7,7 +7,7 @@ use crate::parser::parse;
 
 /// Constant representing the size of the memory array used by the Brainfuck program.
 /// [DOC](http://brainfuck.org/brainfuck.html)
-const MEMORY_SIZE: usize = 30_000;
+pub const MEMORY_SIZE: usize = 30_000;
 
 /// Struct representing the state of a Brainfuck program.
 ///

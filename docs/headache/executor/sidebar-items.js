@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Executor"]};
+window.SIDEBAR_ITEMS = {"constant":["MEMORY_SIZE"],"struct":["Executor"]};
