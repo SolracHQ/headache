@@ -14,5 +14,5 @@ pub enum Instruction {
     /// Set the current data to 0
     Clear,
     /// Add current data to value on pointer + offset and set current data to 0
-    AddTo{ offset: isize }
+    MoveTo{ offset: isize },
 }

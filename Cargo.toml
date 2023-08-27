@@ -8,6 +8,7 @@ repository = "https://github.com/CarlosEduardoL/headache"
 
 [dependencies]
 clap = { version = "4.3.3", features = ["derive"], optional = true }
+dynasmrt = "2.0.0"
 
 [features]
 build-binary = ["clap"]

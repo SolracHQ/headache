@@ -4,6 +4,8 @@ use std::process::exit;
 pub enum Error {
     ParseError(ParserError),
     RuntimeError(std::io::Error),
+    #[cfg(target_arch="x86_64")]
+    CompileError(std::io::Error)
 }
 
 /// Enum representing possible errors that can occur during parsing.

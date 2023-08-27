@@ -1,5 +1,6 @@
 use std::io::{BufRead, BufReader, stdin, Stdin, stdout, Stdout, Write};
 use std::process::exit;
+use headache::compiler::compile;
 use headache::error::{Error, ParserError};
 use headache::executor::Executor;
 use crate::cli::{CLIError, get_mode, Mode};
@@ -25,7 +26,18 @@ fn main() -> Result<(), Error> {
     // Execute the program based on the determined mode.
     match mode {
         Mode::Executor(source) => {
+            #[cfg(target_arch="x86_64")]
+            {
+                let (mut stdin, mut stdout) = (stdin(), stdout());
+                match compile(&source, &mut stdin, &mut stdout) {
+                    Ok(exe) => exe.run()?,
+                    Err(err) => {
+                        executor.execute(&source)?
+                    },
+                }
+            }
             // Parse and execute a Brainfuck script from a file.
+            #[cfg(not(target_arch="x86_64"))]
             executor.execute(&source)?
         }
         Mode::Interpreted => {
@@ -60,7 +72,9 @@ fn interpreter(executor: &mut Executor<Stdin, Stdout>) -> Result<(), Error> {
                         eprintln!("Error: Cannot close ']' without first open '[' it")
                     }
                 }
-                Error::RuntimeError(_) => {return Err(err)}
+                Error::RuntimeError(_) => {return Err(err)},
+                #[cfg(target_arch="x86_64")]
+                Error::CompileError(_) => {return Err(err);}
             }
         }
         buffer.clear()
