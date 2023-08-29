@@ -2,6 +2,7 @@ use std::io::{BufRead, BufReader, stdin, Stdin, stdout, Stdout, Write};
 use std::process::exit;
 use headache::compiler::compile;
 use headache::error::{Error, ParserError};
+#[cfg(target_arch="x86_64")]
 use headache::executor::Executor;
 use crate::cli::{CLIError, get_mode, Mode};
 
@@ -32,7 +33,10 @@ fn main() -> Result<(), Error> {
                 match compile(&source, &mut stdin, &mut stdout) {
                     Ok(exe) => exe.run()?,
                     Err(err) => {
-                        executor.execute(&source)?
+                        match err {
+                            Error::CompileError(_) =>{ executor.execute(&source)? }
+                            _ => {return Err(err);}
+                        }
                     },
                 }
             }

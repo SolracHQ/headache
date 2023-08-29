@@ -52,7 +52,6 @@ impl<'a> Executable<'a> {
                 return Err(Error::RuntimeError(*Box::from_raw(err)));
             }
         }
-
         Ok(())
     }
 }
@@ -129,86 +128,87 @@ fn compile_segment<'a, Input: Read, Output: Write>(
     input: &'a Input,
     out: &'a Output,
 ) {
-    for (i, instruction) in instructions.iter().enumerate() {
+    for instruction in instructions {
         match instruction {
             Instruction::Move(n) => {
-                let check_less_than_zero = code.new_dynamic_label();
-                let end = code.new_dynamic_label();
-                let n =
-                    if *n < 0 { -1 } else { 1 } * (i64::abs(*n as i64) % MEMORY_SIZE as i64) as i32;
                 dynasm! { code
                     ; .arch x64
-                    ; add r13, n
-                    ; cmp r13, 29999
-                    ; jle =>check_less_than_zero
-                    ; sub r13, 30000
-                    ; jmp =>end
-                    ; =>check_less_than_zero
-                    ; cmp r13, 0
-                    ; jge =>end
-                    ; add r13, 30000
-                    ; =>end
+                    ; mov     rcx, QWORD *n as _
+                    ; mov     rdx, QWORD 5037190915060954895
+                    ; mov     rax, rcx
+                    ; imul    rdx
+                    ; mov     rax, rdx
+                    ; shr     rax, 63
+                    ; sar     rdx, 13
+                    ; add     rdx, rax
+                    ; imul    rax, rdx, 30000
+                    ; sub     rcx, rax
+                    ; mov     rax, r13
+                    ; add     rcx, rax
+                    ; add     rcx, 30000
+                    ; mov     rax, rcx
+                    ; shr     rax, 4
+                    ; mov     rdx, QWORD 314824432191309681
+                    ; mul     rdx
+                    ; shr     rdx, 5
+                    ; imul    rax, rdx, 30000
+                    ; sub     rcx, rax
+                    ; mov     r13, rcx
                 }
             }
             Instruction::Add(n) => {
                 dynasm! { code
                     ; .arch x64
-                    ; add BYTE [r12 + r13], *n as i8
+                    ; add     BYTE [r12 + r13], *n as i8
                 }
             }
             Instruction::Write => {
                 dynasm! { code
                     ; .arch x64
-                    ; lea rdi, [r12 + r13]
-                    ; mov rsi, QWORD unsafe { std::mem::transmute::<&'a Output, i64>(out) }
-                    ; mov rax, QWORD write::<Output> as _
-                    ; call rax
-                    ; cmp rax, 0
-                    ; jne ->exit
+                    ; lea     rdi, [r12 + r13]
+                    ; mov     rsi, QWORD unsafe { std::mem::transmute::<&'a Output, _>(out) }
+                    ; mov     rax, QWORD write::<Output> as _
+                    ; call    rax
+                    ; cmp     rax, 0
+                    ; jne     ->exit
                 }
             }
             Instruction::Read => {
                 dynasm! { code
                     ; .arch x64
-                    ; lea rdi, [r12 + r13]
-                    ; mov rsi, QWORD unsafe { std::mem::transmute::<&'a Input, i64>(input) }
-                    ; mov rax, QWORD read::<Input> as _
-                    ; call rax
-                    ; cmp rax, 0
-                    ; jne ->exit
+                    ; lea     rdi, [r12 + r13]
+                    ; mov     rsi, QWORD unsafe { std::mem::transmute::<&'a Input, _>(input) }
+                    ; mov     rax, QWORD read::<Input> as _
+                    ; call    rax
+                    ; cmp     rax, 0
+                    ; jne     ->exit
                 }
             }
             Instruction::Loop(loop_segment) => {
                 let loop_label = code.new_dynamic_label();
+                let end_label = code.new_dynamic_label();
                 dynasm! { code
                     ; .arch x64
                     ; =>loop_label
+                    ; cmp     BYTE [r12 + r13], 0
+                    ; je      =>end_label
                 }
                 compile_segment(&loop_segment, code, input, out);
                 dynasm! { code
                     ; .arch x64
-                    ; cmp BYTE [r12+r13], 0
-                    ; jne =>loop_label
+                    ; cmp     BYTE [r12+r13], 0
+                    ; jne     =>loop_label
+                    ; =>end_label
                 }
             }
             Instruction::Clear => {
                 dynasm! { code
                     ; .arch x64
-                    ; mov BYTE [r12+r13], 0
+                    ; mov     BYTE [r12+r13], 0
                 }
             }
             Instruction::MoveTo { offset } => {
-                compile_segment(
-                    &[
-                        Instruction::Add(255),
-                        Instruction::Move(*offset),
-                        Instruction::Add(1),
-                        Instruction::Move(-offset),
-                    ],
-                    code,
-                    input,
-                    out,
-                );
+                compile_segment(&[Instruction::Loop(vec![Instruction::Add(255), Instruction::Move(*offset), Instruction::Add(1), Instruction::Move(-offset)])], code, input, out)
             }
         }
     }

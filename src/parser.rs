@@ -66,6 +66,7 @@ pub fn parse(source: &str) -> Result<Vec<Instruction>, ParserError> {
                     [Instruction::Add(255), Instruction::Move(x), Instruction::Add(1), Instruction::Move(y)]
                     if x == -y => {
                         current_context.push(MoveTo { offset: x });
+                        continue;
                     }
                     _ => {}
                 }
@@ -82,5 +83,6 @@ pub fn parse(source: &str) -> Result<Vec<Instruction>, ParserError> {
     if contexts.len() != 1 {
         return Err(IncompleteLoop);
     }
-    Ok(contexts.pop().unwrap())
+    let result = contexts.pop().unwrap();
+    Ok(result)
 }
