@@ -4,10 +4,7 @@ use crate::error::Error;
 use crate::error::Error::RuntimeError;
 use crate::instruction::Instruction;
 use crate::parser::parse;
-
-/// Constant representing the size of the memory array used by the Brainfuck program.
-/// [DOC](http://brainfuck.org/brainfuck.html)
-pub const MEMORY_SIZE: usize = 30_000;
+use crate::MEMORY_SIZE;
 
 /// Struct representing the state of a Brainfuck program.
 ///
@@ -123,7 +120,7 @@ impl <Input: Read, Output: Write> Executor<Input, Output> {
     ///   is returned containing the specific parsing error that occurred.
     /// * An I/O error occurs while reading from the input stream or writing to the output stream.
     ///   In this case, a `RuntimeError` is returned containing the underlying I/O error.
-    fn _execute(&mut self, instructions: &[Instruction]) -> Result<(), Error> {
+    pub fn _execute(&mut self, instructions: &[Instruction]) -> Result<(), Error> {
         for instruction in instructions {
             match instruction {
                 Instruction::Move(delta) => {
@@ -146,7 +143,7 @@ impl <Input: Read, Output: Write> Executor<Input, Output> {
                     }
                 }
                 Instruction::Clear => self.memory[self.index] = Wrapping(0),
-                Instruction::AddTo { offset } => {
+                Instruction::MoveTo { offset } => {
                     let delta = (MEMORY_SIZE as isize + offset % MEMORY_SIZE as isize) as usize;
                     let to = (self.index + delta) % MEMORY_SIZE;
 
