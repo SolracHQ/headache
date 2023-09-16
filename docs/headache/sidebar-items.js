@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["error","executor"]};
+window.SIDEBAR_ITEMS = {"constant":["MEMORY_SIZE"],"fn":["test"],"mod":["compiler","error","executor"]};
