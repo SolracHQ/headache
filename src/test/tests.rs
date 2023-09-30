@@ -19,7 +19,6 @@ fn test_hello_world_1() {
 fn test_hello_world_2() {
     let output = execute_with_output(SHORTER_HELLO_WORLD);
     assert_eq!(&output, "Hello, World!");
-    let _unnecessary = "";
 }
 
 #[test]
