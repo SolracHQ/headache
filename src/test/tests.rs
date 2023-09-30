@@ -1,10 +1,10 @@
-use std::io::{Cursor, stdin};
+use std::io::stdin;
 use crate::executor::Executor;
 use crate::test::scripts::{ADD, COMMENTED_HELLO_WORLD, HELLO_WORLD, MANDELBROT, SHORTER_HELLO_WORLD};
 
 fn execute_with_output(program: &str) -> String {
     let mut result = Vec::new();
-    let mut executor = Executor::new(stdin(), Cursor::new(&mut result));
+    let mut executor = Executor::new(stdin(), &mut result);
     executor.execute(program).unwrap();
     std::str::from_utf8(&result).unwrap().to_string()
 }
@@ -19,6 +19,7 @@ fn test_hello_world_1() {
 fn test_hello_world_2() {
     let output = execute_with_output(SHORTER_HELLO_WORLD);
     assert_eq!(&output, "Hello, World!");
+    let _unnecessary = "";
 }
 
 #[test]
